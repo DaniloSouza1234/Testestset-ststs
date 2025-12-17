@@ -1,156 +1,191 @@
-:root{
-  --bg:#071018;
-  --card:#0d1b2a;
-  --text:#e8eef7;
-  --muted:#9fb0c3;
-  --border:#24384f;
+:root {
+  /* Tema industrial */
+  --bg:#0b141c;
+  --card:#13283d;
+  --text:#e6eef6;
+  --muted:#9fb2c7;
+  --border:#2b4663;
   --hlCell:#1b4f7a;
   --hlRow:#0b2f4f;
+  --tableBg:#0f2233;
+  --thBg:#173857;
+  --thGroup:#1f4a74;
+
+  /* Para o cálculo de torque */
+  --input-bg:#101e2f;
+  --button-bg:#3a6fb0;
+  --button-hover:#4da3ff;
+  --highlight-bg:#2a6fb0;
 }
 
-*{ box-sizing:border-box; }
-
-body{
-  margin:0;
-  font-family:Segoe UI, Roboto, Arial, sans-serif;
-  background:var(--bg);
-  color:var(--text);
+* {
+  box-sizing: border-box;
 }
 
-.wrap{
-  max-width:1200px;
-  margin:auto;
-  padding:16px;
+body {
+  margin: 0;
+  font-family: Segoe UI, Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.wrap {
+  max-width: 1200px;
+  margin: auto;
+  padding: 16px;
 }
 
 /* Header fixo */
-.top{
-  position:sticky;
-  top:0;
-  z-index:10000;
-  background:#071018ee;
-  border-bottom:1px solid var(--border);
-
-  /* CRÍTICO: permite o dropdown abrir por cima */
+.top {
+  position: sticky;
+  top: 0;
+  z-index: 10000;
+  background: rgba(11, 20, 28, 0.92);
+  border-bottom: 1px solid var(--border);
   overflow: visible;
 }
 
-h1{ margin:0; font-size:22px; }
-
-.sub{
-  margin:6px 0 12px;
-  color:var(--muted);
-  font-size:13px;
+h1 {
+  margin: 0;
+  font-size: 22px;
 }
 
-/* Controles - CRÍTICO: garantir clique e dropdown */
-.controls{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  align-items:flex-end;
+.sub {
+  margin: 6px 0 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
 
+/* Controles */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-end;
   position: relative;
   z-index: 20000;
 }
 
-.controls label{
-  display:flex;
-  flex-direction:column;
-  font-size:12px;
-  color:var(--muted);
-  gap:6px;
+.controls label {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  color: var(--muted);
+  gap: 6px;
 }
 
 .controls select,
 .controls input,
-.controls button{
-  height:36px;
-  padding:0 10px;
-  border-radius:10px;
-  border:1px solid var(--border);
-  background:#0e1520;
-  color:var(--text);
+.controls button {
+  height: 36px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #0f1e2b;
+  color: var(--text);
 }
 
-/* melhora usabilidade do select */
-.controls select{
+.controls select {
   min-width: 150px;
-  cursor:pointer;
-  appearance:auto;
+  cursor: pointer;
+  appearance: auto;
   -webkit-appearance: menulist;
 }
 
-.controls input{ min-width: 160px; }
+.controls input {
+  min-width: 160px;
+}
 
-.controls button{
-  cursor:pointer;
+.controls button {
+  cursor: pointer;
   min-width: 90px;
 }
 
-.controls button:hover{
-  border-color:#4da3ff;
+.controls button:hover {
+  border-color: #4da3ff;
 }
 
-.card{
-  background:var(--card);
-  border-radius:16px;
-  padding:14px;
-  border:1px solid var(--border);
+/* Card */
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
 }
 
-.table-wrap{
-  overflow:auto;
-  border-radius:12px;
-  border:1px solid var(--border);
+.table-wrap {
+  overflow: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border);
 }
 
-/* tabela */
-table{
-  border-collapse:collapse;
-  min-width:1100px;
-  width:100%;
-  background:#0e1520;
+/* Tabela */
+table {
+  border-collapse: collapse;
+  min-width: 1100px;
+  width: 100%;
+  background: var(--tableBg);
 }
 
-th, td{
-  padding:8px 10px;
-  border:1px solid var(--border);
-  text-align:center;
-  font-size:13px;
+th,
+td {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  text-align: center;
+  font-size: 13px;
 }
 
-th{
-  background:#10263f;
-  position:sticky;
-  top:0;
-  z-index:2;
+th {
+  background: var(--thBg);
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
-th.group{
-  background:#143a5f;
+th.group {
+  background: var(--thGroup);
 }
 
-td.left, th.left{
-  text-align:left;
+td.left,
+th.left {
+  text-align: left;
 }
 
-.hl-row td{
-  background:var(--hlRow);
+/* Destaques */
+.hl-row td {
+  background: var(--hlRow);
 }
 
-.hl-cell{
-  background:var(--hlCell)!important;
-  font-weight:700;
+.hl-cell {
+  background: var(--hlCell) !important;
+  font-weight: 700;
 }
 
-.note{
-  margin-top:8px;
-  font-size:12px;
-  color:var(--muted);
+/* Cálculo de Torque */
+#calculateTorque {
+  background: var(--button-bg);
+  border-color: var(--button-bg);
 }
 
-.footer{
-  text-align:center;
-  color:var(--muted);
+#calculateTorque:hover {
+  background: var(--button-hover);
+}
+
+#torqueResult {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--highlight-bg);
+  font-weight: bold;
+}
+
+.note {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.footer {
+  text-align: center;
+  color: var(--muted);
 }
