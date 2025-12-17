@@ -35,10 +35,10 @@
 
       <label>
         Buscar diâmetro
-        <input type="text" id="search" placeholder="ex: 32, 100">
+        <input type="text" id="search" placeholder="ex: 32, 100" inputmode="numeric">
       </label>
 
-      <button id="clear">Limpar</button>
+      <button id="clear" type="button">Limpar</button>
     </div>
   </div>
 </header>
@@ -48,7 +48,7 @@
     <div class="table-wrap">
       <table id="forceTable"></table>
     </div>
-    <p class="note">Tabela em kgf. Valores de 7 bar são interpolados proporcionalmente.</p>
+    <p class="note">Tabela em kgf. Valores de 7 bar são interpolados proporcionalmente (base 6 bar).</p>
   </div>
 </main>
 
