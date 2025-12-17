@@ -1,58 +1,61 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Tabela de Força do Cilindro (kgf) – 10 a 320 mm</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <title>Tabela de Força – Cilindros Pneumáticos (kgf)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-  <header class="top">
-    <div class="wrap">
-      <h1>Tabela de Força do Cilindro (kgf)</h1>
-      <p class="sub">Padrão (10 a 320 mm) • Extensão e Retração • 2 / 4 / 6 / 8 / 10 bar</p>
 
-      <div class="controls">
-        <label>
-          Buscar diâmetro (mm):
-          <input id="search" type="text" inputmode="numeric" placeholder="ex.: 32, 100, 160..." />
-        </label>
+<header class="top">
+  <div class="wrap">
+    <h1>Tabela de Força do Cilindro Pneumático</h1>
+    <p class="sub">Valores em kgf • Extensão / Retração • 10 a 320 mm</p>
 
-        <label>
-          Pressão (realce):
-          <select id="pressure">
-            <option value="">(nenhuma)</option>
-            <option value="2">2 bar</option>
-            <option value="4">4 bar</option>
-            <option value="6">6 bar</option>
-            <option value="8">8 bar</option>
-            <option value="10">10 bar</option>
-          </select>
-        </label>
+    <div class="controls">
+      <label>
+        Cilindro (mm)
+        <select id="boreSelect"></select>
+      </label>
 
-        <button id="clear" type="button">Limpar</button>
-      </div>
+      <label>
+        Pressão (bar)
+        <select id="pressure">
+          <option value="">—</option>
+          <option value="2">2</option>
+          <option value="4">4</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="10">10</option>
+        </select>
+      </label>
+
+      <label>
+        Buscar diâmetro
+        <input type="text" id="search" placeholder="ex: 32, 100">
+      </label>
+
+      <button id="clear">Limpar</button>
     </div>
-  </header>
+  </div>
+</header>
 
-  <main class="wrap">
-    <section class="card">
-      <h2>Tabela (consulta)</h2>
-      <div class="table-wrap">
-        <table id="forceTable" class="force-table" aria-label="Tabela de força do cilindro em kgf">
-          <!-- gerado via JS -->
-        </table>
-      </div>
-      <p class="note">
-        Observação: valores em <b>kgf</b> conforme a tabela de referência enviada.
-      </p>
-    </section>
-  </main>
+<main class="wrap">
+  <div class="card">
+    <div class="table-wrap">
+      <table id="forceTable"></table>
+    </div>
+    <p class="note">Tabela em kgf. Valores de 7 bar são interpolados proporcionalmente.</p>
+  </div>
+</main>
 
-  <footer class="wrap footer">
-    <small>Versão 1 • Somente tabela • Próximo passo: calculadora e alavanca (quando fecharmos o padrão).</small>
-  </footer>
+<footer class="wrap footer">
+  <small>Projeto para consulta rápida em engenharia • GitHub Pages</small>
+</footer>
 
-  <script src="app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
