@@ -23,18 +23,19 @@ body{
   padding:16px;
 }
 
+/* Header fixo */
 .top{
   position:sticky;
   top:0;
+  z-index:10000;
   background:#071018ee;
   border-bottom:1px solid var(--border);
-  z-index:10;
+
+  /* CRÍTICO: permite o dropdown abrir por cima */
+  overflow: visible;
 }
 
-h1{
-  margin:0;
-  font-size:22px;
-}
+h1{ margin:0; font-size:22px; }
 
 .sub{
   margin:6px 0 12px;
@@ -42,10 +43,15 @@ h1{
   font-size:13px;
 }
 
+/* Controles - CRÍTICO: garantir clique e dropdown */
 .controls{
   display:flex;
   flex-wrap:wrap;
   gap:10px;
+  align-items:flex-end;
+
+  position: relative;
+  z-index: 20000;
 }
 
 .controls label{
@@ -53,6 +59,7 @@ h1{
   flex-direction:column;
   font-size:12px;
   color:var(--muted);
+  gap:6px;
 }
 
 .controls select,
@@ -66,8 +73,19 @@ h1{
   color:var(--text);
 }
 
+/* melhora usabilidade do select */
+.controls select{
+  min-width: 150px;
+  cursor:pointer;
+  appearance:auto;
+  -webkit-appearance: menulist;
+}
+
+.controls input{ min-width: 160px; }
+
 .controls button{
   cursor:pointer;
+  min-width: 90px;
 }
 
 .controls button:hover{
@@ -83,8 +101,11 @@ h1{
 
 .table-wrap{
   overflow:auto;
+  border-radius:12px;
+  border:1px solid var(--border);
 }
 
+/* tabela */
 table{
   border-collapse:collapse;
   min-width:1100px;
@@ -120,7 +141,7 @@ td.left, th.left{
 
 .hl-cell{
   background:var(--hlCell)!important;
-  font-weight:600;
+  font-weight:700;
 }
 
 .note{
