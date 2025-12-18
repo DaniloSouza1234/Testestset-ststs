@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <title>Tabela de Força – Cilindros Pneumáticos (kgf)</title>
@@ -12,7 +13,6 @@
 <header class="top">
   <div class="wrap">
     <h1>Tabela de Força do Cilindro Pneumático</h1>
-    <p class="sub">Valores em kgf • Extensão / Retração • 10 a 320 mm</p>
 
     <div class="controls">
       <label>
@@ -34,8 +34,8 @@
       </label>
 
       <label>
-        Buscar diâmetro
-        <input type="text" id="search" placeholder="ex: 32, 100" inputmode="numeric" />
+        Buscar
+        <input type="text" id="search" placeholder="ex: 32" inputmode="numeric" />
       </label>
 
       <button id="clear" type="button">Limpar</button>
@@ -45,58 +45,50 @@
 
 <main class="wrap">
 
-  <!-- TABELA -->
-  <section class="card">
-    <div class="table-wrap">
-      <table id="forceTable"></table>
-    </div>
-    <p class="note">Tabela em kgf. Valores de 7 bar são interpolados proporcionalmente (base 6 bar).</p>
-  </section>
+<section class="card">
+  <div class="table-wrap">
+    <table id="forceTable"></table>
+  </div>
+</section>
 
-  <!-- TORQUE -->
-  <section class="card torque-card">
-    <h2>Cálculo de Torque (cilindro + alavanca)</h2>
-    <p class="note">
-      Use o ângulo <b>entre o cilindro (linha de ação da força) e a alavanca</b> (seu arco azul).
-    </p>
+<section class="card torque-card">
+  <h2>Cálculo de Torque</h2>
 
-    <div class="torque-grid">
-      <label>
-        Tipo (tabela)
-        <select id="forceKind">
-          <option value="e">Extensão</option>
-          <option value="r">Retração</option>
-        </select>
-      </label>
+  <div class="torque-grid">
 
-      <label>
-        Força do cilindro (kgf)
-        <input type="number" id="cylinderForce" placeholder="ex: 49,2" step="0.1" />
-      </label>
+    <label>
+      Tipo da força
+      <select id="forceKind">
+        <option value="e">Extensão</option>
+        <option value="r">Retração</option>
+      </select>
+    </label>
 
-      <label>
-        Braço da alavanca (mm)
-        <input type="number" id="leverLength" placeholder="ex: 40" step="0.1" />
-      </label>
+    <label>
+      Força (kgf)
+      <input type="number" id="cylinderForce" placeholder="ex: 49.2" step="0.1" />
+    </label>
 
-      <label>
-        Ângulo (°) cilindro × alavanca
-        <input type="number" id="angle" placeholder="ex: 60" min="0" max="180" step="0.1" />
-      </label>
+    <label>
+      Braço (mm)
+      <input type="number" id="leverLength" placeholder="ex: 40" step="0.1" />
+    </label>
 
-      <button id="useTableForce" type="button">Usar força da tabela</button>
-      <button id="calculateTorque" type="button">Calcular torque</button>
-    </div>
+    <label>
+      Ângulo (°)
+      <input type="number" id="angle" placeholder="ex: 60" min="0" max="180" step="0.1" />
+    </label>
 
-    <div id="torqueResult" class="result"></div>
-  </section>
+    <button id="useTableForce" type="button">Usar força da tabela</button>
+    <button id="calculateTorque" type="button">Calcular torque</button>
+  </div>
+
+  <div id="torqueResult" class="result"></div>
+</section>
 
 </main>
 
-<footer class="wrap footer">
-  <small>Projeto para consulta rápida em engenharia • GitHub Pages</small>
-</footer>
-
 <script src="app.js"></script>
+
 </body>
 </html>
