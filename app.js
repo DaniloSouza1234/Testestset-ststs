@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-  const pressures = [2, 4, 6, 7, 8, 10];
+  const pressures = [2,4,5,6,7,8,10];
 
   // Dados em kgf (igual à tabela da imagem; 7 bar é proporcional a 6 bar)
   const data = [
@@ -178,3 +178,4 @@ document.addEventListener("DOMContentLoaded", function () {
   btnUse .addEventListener("click", useTableForce);
   btnCalc.addEventListener("click", calcTorque);
 });
+
