@@ -214,9 +214,14 @@ th.group{
 }
 
 .unit-label{
-  text-align:center;
-  font-size:14px;
-  color:var(--title);
+  text-align:left;
+  font-size:18px;
+  padding-left:6px;
   margin-bottom:10px;
-  font-weight:600;
+  margin-top:-4px;
+  font-weight:700;
+  color:var(--title);
+  letter-spacing:1px;
+  text-transform:uppercase;
 }
+
