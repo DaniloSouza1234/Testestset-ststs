@@ -212,3 +212,11 @@ th.group{
     grid-template-columns: 1fr;
   }
 }
+
+.unit-label{
+  text-align:center;
+  font-size:14px;
+  color:var(--title);
+  margin-bottom:10px;
+  font-weight:600;
+}
