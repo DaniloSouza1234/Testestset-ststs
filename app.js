@@ -1,8 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-  const pressures = [2,4,5,6,7,8,10];
+  // Pressões de 2 a 10 (inteiros)
+  const pressures = [2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-  // Dados em kgf (igual à tabela da imagem; 7 bar é proporcional a 6 bar)
+  // Dados base em kgf para 2, 4, 6, 8, 10 bar (tabela original)
   const data = [
     {bore:10, rod:4,  rodThread:"M4x0,7",   port:"M5",     f:{2:{e:1.6,   r:1.3}, 4:{e:3.2,   r:2.7}, 6:{e:4.8,   r:4.0}, 8:{e:6.4,   r:5.4}, 10:{e:8.0,   r:6.7}}},
     {bore:12, rod:6,  rodThread:"M6x1,0",   port:"M5",     f:{2:{e:2.3,   r:1.7}, 4:{e:4.6,   r:3.5}, 6:{e:6.9,   r:5.2}, 8:{e:9.2,   r:6.9}, 10:{e:11.5,  r:8.6}}},
@@ -45,18 +46,31 @@ document.addEventListener("DOMContentLoaded", function () {
     return s ? Number(s) : NaN;
   }
 
+  // força em qualquer pressão de 2 a 10
   function getForce(row, p, kind){
     p = Number(p);
-    if(row.f[p]) return row.f[p][kind];
-    // 7 bar -> proporcional a 6 bar
+    if(row.f[p]) return row.f[p][kind];   // 2,4,6,8,10 já existem
+
+    if(p === 3){
+      return (row.f[2][kind] + row.f[4][kind]) / 2;
+    }
+    if(p === 5){
+      return (row.f[4][kind] + row.f[6][kind]) / 2;
+    }
+    if(p === 7){
+      return (row.f[6][kind] + row.f[8][kind]) / 2;
+    }
+    if(p === 9){
+      return (row.f[8][kind] + row.f[10][kind]) / 2;
+    }
+
+    // fallback (não deve ser usado com as opções atuais)
     return row.f[6][kind] * (p / 6);
   }
 
   function clearHighlights(){
-    const trs = table.querySelectorAll("tr");
-    trs.forEach(tr => tr.classList.remove("hl-row"));
-    const tds = table.querySelectorAll("td");
-    tds.forEach(td => td.classList.remove("hl-cell"));
+    table.querySelectorAll("tr").forEach(tr => tr.classList.remove("hl-row"));
+    table.querySelectorAll("td").forEach(td => td.classList.remove("hl-cell"));
   }
 
   function buildTable(rows){
@@ -149,9 +163,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const rad = A * Math.PI / 180;
     const sin = Math.sin(rad);
 
-    const Tmm = F * L * sin;            // kgf·mm
-    const Tm  = Tmm / 1000;             // kgf·m
-    const Tnm = (F * 9.80665) * (L/1000) * sin; // N·m
+    const Tmm = F * L * sin;                     // kgf·mm
+    const Tm  = Tmm / 1000;                      // kgf·m
+    const Tnm = (F * 9.80665) * (L/1000) * sin;  // N·m
 
     result.innerHTML =
       `Torque: ${Tmm.toFixed(1)} kgf·mm | ${Tm.toFixed(3)} kgf·m | ${Tnm.toFixed(2)} N·m`;
@@ -166,7 +180,8 @@ document.addEventListener("DOMContentLoaded", function () {
   presSel.addEventListener("change", applyFilter);
   search .addEventListener("input",  applyFilter);
   boreSel.addEventListener("change", applyFilter);
-  clear  .addEventListener("click", () => {
+
+  clear.addEventListener("click", () => {
     boreSel.value = "";
     presSel.value = "";
     search.value  = "";
@@ -178,4 +193,3 @@ document.addEventListener("DOMContentLoaded", function () {
   btnUse .addEventListener("click", useTableForce);
   btnCalc.addEventListener("click", calcTorque);
 });
-
