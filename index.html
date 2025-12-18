@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Tabela de Força do Cilindro Pneumático</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="styles.css?v=3" />
+  <link rel="stylesheet" href="styles.css?v=5" />
 </head>
 
 <body>
@@ -24,10 +24,13 @@
         <select id="pressure">
           <option value="">—</option>
           <option value="2">2</option>
+          <option value="3">3</option>
           <option value="4">4</option>
+          <option value="5">5</option>
           <option value="6">6</option>
           <option value="7">7</option>
           <option value="8">8</option>
+          <option value="9">9</option>
           <option value="10">10</option>
         </select>
       </label>
@@ -49,6 +52,13 @@
     <div class="table-wrap">
       <table id="forceTable"></table>
     </div>
+    <p class="note">
+      Obs.: Valores de <b>3, 5, 7 e 9 bar</b> são <b>interpolados</b> (média entre as forças das pressões vizinhas):<br>
+      3 bar → entre 2 e 4 &nbsp;•&nbsp;
+      5 bar → entre 4 e 6 &nbsp;•&nbsp;
+      7 bar → entre 6 e 8 &nbsp;•&nbsp;
+      9 bar → entre 8 e 10 bar.
+    </p>
   </section>
 
   <!-- CARD DO TORQUE -->
@@ -88,6 +98,6 @@
 
 </main>
 
-<script src="app.js?v=3"></script>
+<script src="app.js?v=5"></script>
 </body>
 </html>
