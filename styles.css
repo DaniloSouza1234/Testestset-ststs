@@ -228,7 +228,7 @@ th.group{
   display:flex;
   flex-wrap:wrap;
   gap:10px;
-  margin-bottom:12px;
+  margin:12px 0;
 }
 
 .chart-controls label{
@@ -239,7 +239,7 @@ th.group{
   gap:4px;
 }
 
-.chart-controls select{
+.chart-controls input{
   height:36px;
   padding:0 10px;
   border-radius:6px;
