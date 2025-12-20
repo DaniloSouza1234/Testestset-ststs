@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Transportadores – Cálculos de Velocidade</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <h1>Cálculos para Transportadores</h1>
+
+    <nav class="main-nav">
+      <a href="index.html">Pneumática</a>
+      <a href="transportadores.html" class="active">Transportadores</a>
+    </nav>
+
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="card">
+    <h2>Velocidade por Produção (m/min e m/s)</h2>
+
+    <div class="torque-grid">
+
+      <label>Comprimento do Produto (mm)
+        <input type="number" id="prodLength" placeholder="ex: 320">
+      </label>
+
+      <label>Espaçamento entre Produtos (mm)
+        <input type="number" id="gap" placeholder="ex: 600">
+      </label>
+
+      <label>Produção (peças/min)
+        <input type="number" id="rate" placeholder="ex: 25">
+      </label>
+
+      <label>Diâmetro do Tambor (mm)
+        <input type="number" id="drumDiameter" placeholder="ex: 80">
+      </label>
+
+      <label>Comprimento da Esteira (m)
+        <input type="number" id="beltLength" placeholder="ex: 3">
+      </label>
+
+      <button id="calcTransport" type="button">Calcular</button>
+      <button id="clearTransport" type="button">Limpar</button>
+
+    </div>
+
+    <div id="transportResult" class="result"></div>
+
+  </section>
+
+  <section class="card torque-card">
+    <h2>RPM → Velocidade da Esteira</h2>
+
+    <div class="torque-grid">
+
+      <label>Diâmetro do Tambor (mm)
+        <input type="number" id="convDrumDiameter" placeholder="ex: 80">
+      </label>
+
+      <label>RPM do Tambor
+        <input type="number" id="convRpm" placeholder="ex: 30">
+      </label>
+
+      <button id="calcConv" type="button">Calcular</button>
+      <button id="clearConv" type="button">Limpar</button>
+
+    </div>
+
+    <div id="convResult" class="result"></div>
+
+  </section>
+
+</main>
+
+<script src="transportadores.js"></script>
+</body>
+</html>
