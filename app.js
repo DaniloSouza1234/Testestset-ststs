@@ -1,9 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-  // Pressões de 2 a 10 bar
   const pressures = [2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-  // Dados base em kgf para 2, 4, 6, 8, 10 bar (tabela original)
+  // Dados base em kgf para 2,4,6,8,10 bar
   const data = [
     {bore:10, rod:4,  rodThread:"M4x0,7",   port:"M5",     f:{2:{e:1.6,   r:1.3}, 4:{e:3.2,   r:2.7}, 6:{e:4.8,   r:4.0}, 8:{e:6.4,   r:5.4}, 10:{e:8.0,   r:6.7}}},
     {bore:12, rod:6,  rodThread:"M6x1,0",   port:"M5",     f:{2:{e:2.3,   r:1.7}, 4:{e:4.6,   r:3.5}, 6:{e:6.9,   r:5.2}, 8:{e:9.2,   r:6.9}, 10:{e:11.5,  r:8.6}}},
@@ -34,7 +33,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const leverIn    = document.getElementById("leverLength");
   const angleStart = document.getElementById("angleStart");
   const angleEnd   = document.getElementById("angleEnd");
-  const torqueUnit = document.getElementById("torqueUnit");
   const btnUse     = document.getElementById("useTableForce");
   const btnCalc    = document.getElementById("calculateTorque");
   const result     = document.getElementById("torqueResult");
@@ -56,25 +54,16 @@ document.addEventListener("DOMContentLoaded", function () {
     return s ? Number(s) : NaN;
   }
 
-  // força em qualquer pressão de 2 a 10
   function getForce(row, p, kind){
     p = Number(p);
-    if(row.f[p]) return row.f[p][kind];   // 2,4,6,8,10 já existem
+    if(row.f[p]) return row.f[p][kind];
 
-    if(p === 3){
-      return (row.f[2][kind] + row.f[4][kind]) / 2;
-    }
-    if(p === 5){
-      return (row.f[4][kind] + row.f[6][kind]) / 2;
-    }
-    if(p === 7){
-      return (row.f[6][kind] + row.f[8][kind]) / 2;
-    }
-    if(p === 9){
-      return (row.f[8][kind] + row.f[10][kind]) / 2;
-    }
+    if(p === 3) return (row.f[2][kind] + row.f[4][kind]) / 2;
+    if(p === 5) return (row.f[4][kind] + row.f[6][kind]) / 2;
+    if(p === 7) return (row.f[6][kind] + row.f[8][kind]) / 2;
+    if(p === 9) return (row.f[8][kind] + row.f[10][kind]) / 2;
 
-    // fallback de segurança
+    // fallback linear
     return row.f[6][kind] * (p / 6);
   }
 
@@ -194,22 +183,18 @@ document.addEventListener("DOMContentLoaded", function () {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
-          x: {
-            title: { display: true, text: "Ângulo (°)" }
-          },
-          y: {
-            title: { display: true, text: "Torque (kgf·mm)" }
-          }
+          x: { title: { display: true, text: "Ângulo (°)" } },
+          y: { title: { display: true, text: "Torque (kgf·mm)" } }
         }
       }
     });
   }
 
   function calcTorqueAndChart(){
-    const F  = parsePT(forceIn.value);       // kgf
-    const L  = parsePT(leverIn.value);       // mm
-    const A0 = parsePT(angleStart.value);    // graus
-    const A1 = parsePT(angleEnd.value);      // graus
+    const F  = parsePT(forceIn.value);
+    const L  = parsePT(leverIn.value);
+    const A0 = parsePT(angleStart.value);
+    const A1 = parsePT(angleEnd.value);
 
     if(!isFinite(F) || !isFinite(L) || !isFinite(A0) || !isFinite(A1)){
       result.innerHTML = "Preencha força, braço e ângulos inicial/final corretamente.";
@@ -219,34 +204,27 @@ document.addEventListener("DOMContentLoaded", function () {
     const rad0 = A0 * Math.PI / 180;
     const sin0 = Math.sin(rad0);
 
-    const Tmm0 = F * L * sin0;   // kgf·mm
-    const Tm0  = Tmm0 / 1000;    // kgf·m
+    const Tmm0 = F * L * sin0;                     // kgf·mm (interno)
+    const Tm0  = Tmm0 / 1000;                      // kgf·m
     const Tnm0 = (F * 9.80665) * (L/1000) * sin0;  // N·m
 
-    const unit = (torqueUnit.value || "kgfm");
-    let torqueText;
-    if(unit === "kgfm"){
-      torqueText = `${Tm0.toFixed(3)} kgf·m`;
-    } else {
-      torqueText = `${Tnm0.toFixed(2)} N·m`;
-    }
-
     result.innerHTML =
-      `Torque no ângulo inicial (${A0.toFixed(1)}°): <b>${torqueText}</b>`;
+      `Torque no ângulo inicial (${A0.toFixed(1)}°): ` +
+      `<b>${Tm0.toFixed(3)} kgf·m</b> | <b>${Tnm0.toFixed(2)} N·m</b>`;
 
     buildChart(F, L, A0, A1);
   }
 
-  // -------- DIMENSIONAMENTO PELO TORQUE DESEJADO --------
+  // -------- DIMENSIONAMENTO PELO TORQUE DESEJADO (com alerta) --------
   function calcCylinderFromTorque(){
     cylinderResult.innerHTML = "";
 
     const pVal = (presSel.value || "").trim();
     const kind = (kindSel.value || "e");
-    const L    = parsePT(leverIn.value);        // mm
-    const A0   = parsePT(angleStart.value);     // graus
-    const A1   = parsePT(angleEnd.value);       // graus
-    const Td   = parsePT(desiredTorque.value);  // torque desejado
+    const L    = parsePT(leverIn.value);
+    const A0   = parsePT(angleStart.value);
+    const A1   = parsePT(angleEnd.value);
+    const Td   = parsePT(desiredTorque.value);
     const unit = (desiredTorqueUnit.value || "kgfm");
 
     if(!pVal){
@@ -274,11 +252,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let Freq_kgf;
     if(unit === "kgfm"){
-      // Td em kgf·m → Tmm = Td * 1000 → F = Tmm / (L * sen(θ_min))
+      // Td em kgf·m → Tmm = Td * 1000
       Freq_kgf = (Td * 1000) / (L * sinMin);
     } else {
-      // Td em N·m → T = F * 9.80665 * (L/1000) * sen(θ_min)
-      // => F = Td / (9.80665 * (L/1000) * sen(θ_min))
+      // Td em N·m
       Freq_kgf = Td / (9.80665 * (L/1000) * sinMin);
     }
 
@@ -287,12 +264,11 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // procura cilindro mínimo que atenda
     const sorted = data.slice().sort((a,b) => a.bore - b.bore);
     let chosen = null;
 
     for(const row of sorted){
-      const Fcyl = getForce(row, pVal, kind);  // kgf
+      const Fcyl = getForce(row, pVal, kind);
       if(Fcyl >= Freq_kgf){
         chosen = {row, Fcyl};
         break;
@@ -308,17 +284,57 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const margem = chosen.Fcyl - Freq_kgf;
     const perc   = (margem / Freq_kgf) * 100;
-
     const unidadeTexto = (unit === "kgfm" ? "kgf·m" : "N·m");
+
+    // torque real que o cilindro escolhido gera nos dois extremos
+    const Fcil = chosen.Fcyl; // kgf
+    const TmStart = Fcil * (L/1000) * Math.sin(rad0);  // kgf·m
+    const TmEnd   = Fcil * (L/1000) * Math.sin(rad1);  // kgf·m
+
+    let TstartOut, TendOut;
+    if(unit === "kgfm"){
+      TstartOut = `${TmStart.toFixed(3)} kgf·m`;
+      TendOut   = `${TmEnd.toFixed(3)} kgf·m`;
+    } else {
+      const TnStart = TmStart * 9.80665;
+      const TnEnd   = TmEnd * 9.80665;
+      TstartOut = `${TnStart.toFixed(2)} N·m`;
+      TendOut   = `${TnEnd.toFixed(2)} N·m`;
+    }
+
+    // razão entre o pior e o melhor torque (para alerta)
+    const absStart = Math.abs(TmStart);
+    const absEnd   = Math.abs(TmEnd);
+    const maxT = Math.max(absStart, absEnd);
+    const minT = Math.min(absStart, absEnd);
+    const ratio = maxT > 0 ? (minT / maxT) : 1;
+
+    let alerta = "";
+
+    if(ratio < 0.7){
+      alerta +=
+        "<br><br>⚠ <b>Atenção:</b> o torque do cilindro varia bastante entre o início e o fim do movimento. " +
+        "No ponto mais desfavorável ele é bem menor. Verifique risco de recuo da carga e considere " +
+        "usar válvula de retenção pilotada ou um cilindro maior.";
+    }
+
+    if(perc < 20){
+      alerta +=
+        "<br>⚠ <b>Observação:</b> a margem de segurança é baixa (&lt; 20%). " +
+        "Em aplicações com impacto ou carga variável, avalie usar um cilindro maior ou pressão maior.";
+    }
 
     cylinderResult.innerHTML =
       `Torque desejado (mínimo no intervalo): <b>${Td.toFixed(2)} ${unidadeTexto}</b><br>` +
       `Força mínima necessária no cilindro: <b>${Freq_kgf.toFixed(2)} kgf</b><br>` +
       `Cilindro mínimo recomendado (pior ângulo do intervalo): ` +
       `<b>Ø${chosen.row.bore} mm</b> (${kind === "e" ? "extensão" : "retração"} em ${pVal} bar)<br>` +
-      `Força fornecida pelo cilindro selecionado: <b>${chosen.Fcyl.toFixed(2)} kgf</b><br>` +
+      `Força fornecida pelo cilindro selecionado: <b>${Fcil.toFixed(2)} kgf</b><br>` +
       `Margem de segurança aproximada: <b>${margem.toFixed(2)} kgf</b> ` +
-      `(${perc.toFixed(1)}% acima do mínimo).`;
+      `(${perc.toFixed(1)}% acima do mínimo).<br><br>` +
+      `Torque do cilindro no ângulo inicial: <b>${TstartOut}</b><br>` +
+      `Torque do cilindro no ângulo final: <b>${TendOut}</b>` +
+      alerta;
   }
 
   // ---- Inicialização ----
