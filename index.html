@@ -97,6 +97,14 @@
         <input type="number" id="angleEnd" placeholder="ex: 120" min="0" max="180" step="0.1" />
       </label>
 
+      <label>
+        Unidade do torque
+        <select id="torqueUnit">
+          <option value="kgfm">kgf·m</option>
+          <option value="Nm">N·m</option>
+        </select>
+      </label>
+
       <button id="useTableForce" type="button">Usar força da tabela</button>
       <button id="calculateTorque" type="button">Calcular torque e gerar gráfico</button>
     </div>
@@ -111,20 +119,21 @@
     <div class="dim-section">
       <h3>Dimensionar cilindro pelo torque desejado</h3>
       <p class="dim-note">
-        Usa o <b>braço</b> e o <b>ângulo inicial</b> informados acima,
-        junto com a <b>pressão</b> e o <b>tipo de força (Ext/Ret)</b>.
+        Usa o <b>braço</b> e os <b>ângulos inicial e final</b> informados acima,
+        junto com a <b>pressão</b> e o <b>tipo de força (Ext/Ret)</b>.<br>
+        O dimensionamento é feito pelo <b>pior ponto do intervalo</b> (menor torque disponível).
       </p>
 
       <div class="dim-grid">
         <label>
           Torque desejado
-          <input type="number" id="desiredTorque" placeholder="ex: 500" step="0.1" />
+          <input type="number" id="desiredTorque" placeholder="ex: 50" step="0.1" />
         </label>
 
         <label>
           Unidade
           <select id="desiredTorqueUnit">
-            <option value="kgfmm">kgf·mm</option>
+            <option value="kgfm">kgf·m</option>
             <option value="Nm">N·m</option>
           </select>
         </label>
