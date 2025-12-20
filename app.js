@@ -38,10 +38,12 @@ document.addEventListener("DOMContentLoaded", function () {
   const result  = document.getElementById("torqueResult");
 
   // elementos do gráfico
-  const chartPressure = document.getElementById("chartPressure");
-  const chartKind     = document.getElementById("chartKind");
-  const chartBtn      = document.getElementById("plotChart");
-  const chartCanvas   = document.getElementById("forceChart");
+  const chartLever   = document.getElementById("chartLever");
+  const angleStart   = document.getElementById("angleStart");
+  const angleEnd     = document.getElementById("angleEnd");
+  const chartBtn     = document.getElementById("plotChart");
+  const chartCanvas  = document.getElementById("forceChart");
+  const chartMessage = document.getElementById("chartMessage");
   let forceChart = null;
 
   function fmt1(v){ return Number(v).toFixed(1).replace(".",","); }
@@ -177,15 +179,52 @@ document.addEventListener("DOMContentLoaded", function () {
       `Torque: ${Tmm.toFixed(1)} kgf·mm | ${Tm.toFixed(3)} kgf·m | ${Tnm.toFixed(2)} N·m`;
   }
 
-  // --------- GRÁFICO ---------
+  // --------- GRÁFICO: força efetiva x ângulo ---------
   function buildChart(){
-    if(!chartCanvas) return;
+    chartMessage.innerHTML = "";
 
-    const pVal = Number(chartPressure.value || 6);
-    const kind = chartKind.value || "e";
+    const boreVal = (boreSel.value || "").trim();
+    const pVal    = (presSel.value || "").trim();
+    const kind    = (kindSel.value || "e");
 
-    const labels = data.map(d => d.bore + " mm");
-    const values = data.map(d => getForce(d, pVal, kind));
+    if(!boreVal || !pVal){
+      chartMessage.innerHTML = "Selecione o diâmetro do cilindro e a pressão na tabela (acima) antes de gerar o gráfico.";
+      return;
+    }
+
+    const row = data.find(d => String(d.bore) === boreVal);
+    if(!row){
+      chartMessage.innerHTML = "Cilindro não encontrado na tabela.";
+      return;
+    }
+
+    const L = parsePT(chartLever.value);   // mm
+    const A0 = parsePT(angleStart.value);  // graus
+    const A1 = parsePT(angleEnd.value);    // graus
+
+    if(!isFinite(L) || !isFinite(A0) || !isFinite(A1)){
+      chartMessage.innerHTML = "Preencha comprimento da alavanca e ângulos inicial/final corretamente.";
+      return;
+    }
+
+    const F = getForce(row, pVal, kind);  // kgf
+    if(!isFinite(F)){
+      chartMessage.innerHTML = "Não foi possível obter a força do cilindro para esses parâmetros.";
+      return;
+    }
+
+    const steps = 50;
+    const labels = [];
+    const values = [];
+
+    for(let i = 0; i <= steps; i++){
+      const ang = A0 + (A1 - A0) * (i / steps);
+      const rad = ang * Math.PI / 180;
+      const F_eff = F * Math.sin(rad);   // kgf efetivo na alavanca
+
+      labels.push(ang.toFixed(1) + "°");
+      values.push(F_eff);
+    }
 
     if(forceChart){
       forceChart.destroy();
@@ -196,7 +235,7 @@ document.addEventListener("DOMContentLoaded", function () {
       data: {
         labels: labels,
         datasets: [{
-          label: `Força em ${pVal} bar (${kind === "e" ? "extensão" : "retração"})`,
+          label: `Força efetiva na alavanca (kgf)`,
           data: values,
           tension: 0.25
         }]
@@ -206,15 +245,17 @@ document.addEventListener("DOMContentLoaded", function () {
         maintainAspectRatio: false,
         scales: {
           x: {
-            title: { display: true, text: "Diâmetro do cilindro (mm)" }
+            title: { display: true, text: "Ângulo entre cilindro e alavanca (°)" }
           },
           y: {
-            beginAtZero: true,
-            title: { display: true, text: "Força (kgf)" }
+            title: { display: true, text: "Força efetiva (kgf)" }
           }
         }
       }
     });
+
+    chartMessage.innerHTML =
+      `Força axial usada: <b>${F.toFixed(1)} kgf</b> · Comprimento da alavanca: <b>${L.toFixed(1)} mm</b>.`;
   }
 
   // ---- Inicialização ----
@@ -234,6 +275,11 @@ document.addEventListener("DOMContentLoaded", function () {
     buildTable(data);
     clearHighlights();
     result.innerHTML = "";
+    chartMessage.innerHTML = "";
+    if(forceChart){
+      forceChart.destroy();
+      forceChart = null;
+    }
   });
 
   btnUse .addEventListener("click", useTableForce);
@@ -241,7 +287,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if(chartBtn){
     chartBtn.addEventListener("click", buildChart);
-    // gráfico inicial padrão 6 bar extensão
-    buildChart();
   }
 });
