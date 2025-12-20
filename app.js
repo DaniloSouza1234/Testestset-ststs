@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-  // Pressões de 2 a 10 (inteiros)
+  // Pressões de 2 a 10 bar
   const pressures = [2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   // Dados base em kgf para 2, 4, 6, 8, 10 bar (tabela original)
@@ -37,8 +37,14 @@ document.addEventListener("DOMContentLoaded", function () {
   const btnCalc = document.getElementById("calculateTorque");
   const result  = document.getElementById("torqueResult");
 
+  // elementos do gráfico
+  const chartPressure = document.getElementById("chartPressure");
+  const chartKind     = document.getElementById("chartKind");
+  const chartBtn      = document.getElementById("plotChart");
+  const chartCanvas   = document.getElementById("forceChart");
+  let forceChart = null;
+
   function fmt1(v){ return Number(v).toFixed(1).replace(".",","); }
-  function fmt2(v){ return Number(v).toFixed(2).replace(".",","); }
 
   function parsePT(v){
     if(v==null) return NaN;
@@ -64,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return (row.f[8][kind] + row.f[10][kind]) / 2;
     }
 
-    // fallback (não deve ser usado com as opções atuais)
+    // fallback de segurança
     return row.f[6][kind] * (p / 6);
   }
 
@@ -171,6 +177,46 @@ document.addEventListener("DOMContentLoaded", function () {
       `Torque: ${Tmm.toFixed(1)} kgf·mm | ${Tm.toFixed(3)} kgf·m | ${Tnm.toFixed(2)} N·m`;
   }
 
+  // --------- GRÁFICO ---------
+  function buildChart(){
+    if(!chartCanvas) return;
+
+    const pVal = Number(chartPressure.value || 6);
+    const kind = chartKind.value || "e";
+
+    const labels = data.map(d => d.bore + " mm");
+    const values = data.map(d => getForce(d, pVal, kind));
+
+    if(forceChart){
+      forceChart.destroy();
+    }
+
+    forceChart = new Chart(chartCanvas, {
+      type: "line",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: `Força em ${pVal} bar (${kind === "e" ? "extensão" : "retração"})`,
+          data: values,
+          tension: 0.25
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            title: { display: true, text: "Diâmetro do cilindro (mm)" }
+          },
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: "Força (kgf)" }
+          }
+        }
+      }
+    });
+  }
+
   // ---- Inicialização ----
   boreSel.innerHTML = '<option value="">—</option>' +
     data.map(d => `<option value="${d.bore}">${d.bore}</option>`).join("");
@@ -192,4 +238,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   btnUse .addEventListener("click", useTableForce);
   btnCalc.addEventListener("click", calcTorque);
+
+  if(chartBtn){
+    chartBtn.addEventListener("click", buildChart);
+    // gráfico inicial padrão 6 bar extensão
+    buildChart();
+  }
 });
