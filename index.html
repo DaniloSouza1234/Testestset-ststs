@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Tabela de Força do Cilindro Pneumático</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="styles.css?v=5" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
@@ -48,12 +48,11 @@
 <main class="wrap">
 
   <!-- CARD DA TABELA -->
- <section class="card">
-
+  <section class="card">
     <p class="unit-label">UNIDADE: KGF</p>
 
     <div class="table-wrap">
-        <table id="forceTable"></table>
+      <table id="forceTable"></table>
     </div>
 
     <p class="note">
@@ -100,10 +99,46 @@
     <div id="torqueResult" class="result"></div>
   </section>
 
+  <!-- CARD DO GRÁFICO -->
+  <section class="card chart-card">
+    <h2>Gráfico de Força × Diâmetro</h2>
+
+    <div class="chart-controls">
+      <label>
+        Pressão (bar)
+        <select id="chartPressure">
+          <option value="6">6</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+        </select>
+      </label>
+
+      <label>
+        Tipo da força
+        <select id="chartKind">
+          <option value="e">Extensão</option>
+          <option value="r">Retração</option>
+        </select>
+      </label>
+
+      <button id="plotChart" type="button">Plotar gráfico</button>
+    </div>
+
+    <div class="chart-wrapper">
+      <canvas id="forceChart"></canvas>
+    </div>
+  </section>
+
 </main>
 
-<script src="app.js?v=5"></script>
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
-
-
