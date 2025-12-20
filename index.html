@@ -64,9 +64,9 @@
     </p>
   </section>
 
-  <!-- CARD DO TORQUE -->
+  <!-- CARD DO TORQUE (ponto único) -->
   <section class="card torque-card">
-    <h2>Cálculo de Torque</h2>
+    <h2>Cálculo de Torque (ponto único)</h2>
 
     <div class="torque-grid">
       <label>
@@ -99,40 +99,40 @@
     <div id="torqueResult" class="result"></div>
   </section>
 
-  <!-- CARD DO GRÁFICO -->
+  <!-- CARD DO GRÁFICO: força efetiva x ângulo -->
   <section class="card chart-card">
-    <h2>Gráfico de Força × Diâmetro</h2>
+    <h2>Gráfico de Força Efetiva × Ângulo</h2>
+
+    <p class="note">
+      O gráfico usa a força do cilindro selecionado na tabela
+      (diâmetro, pressão e tipo Ext/Ret) e calcula a
+      <b>força efetiva na alavanca</b> F<sub>efetiva</sub> = F · sen(θ).
+    </p>
 
     <div class="chart-controls">
       <label>
-        Pressão (bar)
-        <select id="chartPressure">
-          <option value="6">6</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-          <option value="9">9</option>
-          <option value="10">10</option>
-        </select>
+        Comprimento da alavanca (mm)
+        <input type="number" id="chartLever" placeholder="ex: 40" step="0.1" />
       </label>
 
       <label>
-        Tipo da força
-        <select id="chartKind">
-          <option value="e">Extensão</option>
-          <option value="r">Retração</option>
-        </select>
+        Ângulo inicial (°)
+        <input type="number" id="angleStart" placeholder="ex: 30" step="0.1" />
       </label>
 
-      <button id="plotChart" type="button">Plotar gráfico</button>
+      <label>
+        Ângulo final (°)
+        <input type="number" id="angleEnd" placeholder="ex: 120" step="0.1" />
+      </label>
+
+      <button id="plotChart" type="button">Gerar gráfico</button>
     </div>
 
     <div class="chart-wrapper">
       <canvas id="forceChart"></canvas>
     </div>
+
+    <div id="chartMessage" class="result"></div>
   </section>
 
 </main>
