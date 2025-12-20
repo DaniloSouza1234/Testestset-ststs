@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
     {bore:80, rod:25, rodThread:"M20x1,5",  port:"G 3/8\"",f:{2:{e:102.5, r:92.5},4:{e:205.0, r:185.0},6:{e:307.5, r:277.5},8:{e:410.0, r:370.0},10:{e:512.6, r:462.5}}},
     {bore:100,rod:25, rodThread:"M20x1,5",  port:"G 1/2\"",f:{2:{e:160.2, r:150.2},4:{e:320.3, r:300.3},6:{e:480.5, r:450.5},8:{e:640.7, r:600.7},10:{e:800.9, r:750.8}}},
     {bore:125,rod:32, rodThread:"M27x2,0",  port:"G 1/2\"",f:{2:{e:250.3, r:233.9},4:{e:500.5, r:467.7},6:{e:750.8, r:701.6},8:{e:1001.1,r:935.5},10:{e:1251.4,r:1169.4}}},
-    {bore:160,rod:40, rodThread:"M36x2,0",  port:"G 3/4\"",f:{2:{e:410.3, r:384.4},4:{e:820.1, r:768.8},6:{e:1230.1,r:1153.3},8:{e:1640.2,r:1537.7},10:{e:2050.2,r:1922.1}}},
+    {bore:160,rod:40, rodThread:"M36x2,0",  port:"G 3/4\"",f:{2:{e:410.3, r:384.4},4:{e:820.1,  r:768.8},6:{e:1230.1,r:1153.3},8:{e:1640.2,r:1537.7},10:{e:2050.2,r:1922.1}}},
     {bore:200,rod:40, rodThread:"M36x2,0",  port:"G 3/4\"",f:{2:{e:640.7, r:615.1},4:{e:1281.4,r:1230.1},6:{e:1922.1,r:1845.2},8:{e:2562.8,r:2460.3},10:{e:3203.5,r:3075.3}}},
     {bore:250,rod:50, rodThread:"M42x2,0",  port:"G 1\"",  f:{2:{e:1001.1,r:961.0},4:{e:2002.2,r:1922.1},6:{e:3003.3,r:2883.2},8:{e:4004.4,r:3844.2},10:{e:5005.5,r:4805.2}}},
     {bore:320,rod:63, rodThread:"M48x2",    port:"G 1\"",  f:{2:{e:1640.2,r:1576.6},4:{e:3280.4,r:3153.1},6:{e:4920.6,r:4729.8},8:{e:6560.7,r:6306.5},10:{e:8200.9,r:7883.1}}}
@@ -29,17 +29,23 @@ document.addEventListener("DOMContentLoaded", function () {
   const search  = document.getElementById("search");
   const clear   = document.getElementById("clear");
 
-  const kindSel   = document.getElementById("forceKind");
-  const forceIn   = document.getElementById("cylinderForce");
-  const leverIn   = document.getElementById("leverLength");
+  const kindSel    = document.getElementById("forceKind");
+  const forceIn    = document.getElementById("cylinderForce");
+  const leverIn    = document.getElementById("leverLength");
   const angleStart = document.getElementById("angleStart");
   const angleEnd   = document.getElementById("angleEnd");
-  const btnUse    = document.getElementById("useTableForce");
-  const btnCalc   = document.getElementById("calculateTorque");
-  const result    = document.getElementById("torqueResult");
+  const btnUse     = document.getElementById("useTableForce");
+  const btnCalc    = document.getElementById("calculateTorque");
+  const result     = document.getElementById("torqueResult");
 
   const chartCanvas = document.getElementById("forceChart");
   let forceChart = null;
+
+  // dimensionamento
+  const desiredTorque    = document.getElementById("desiredTorque");
+  const desiredTorqueUnit= document.getElementById("desiredTorqueUnit");
+  const btnCalcCylinder  = document.getElementById("calcCylinder");
+  const cylinderResult   = document.getElementById("cylinderResult");
 
   function fmt1(v){ return Number(v).toFixed(1).replace(".",","); }
 
@@ -222,6 +228,77 @@ document.addEventListener("DOMContentLoaded", function () {
     buildChart(F, L, A0, A1);
   }
 
+  // -------- DIMENSIONAMENTO PELO TORQUE DESEJADO --------
+  function calcCylinderFromTorque(){
+    cylinderResult.innerHTML = "";
+
+    const pVal = (presSel.value || "").trim();
+    const kind = (kindSel.value || "e");
+    const L    = parsePT(leverIn.value);        // mm
+    const A0   = parsePT(angleStart.value);     // graus
+    const Td   = parsePT(desiredTorque.value);  // torque desejado
+    const unit = (desiredTorqueUnit.value || "kgfmm");
+
+    if(!pVal){
+      cylinderResult.innerHTML = "Selecione a pressão (bar) no topo da página.";
+      return;
+    }
+    if(!isFinite(L) || !isFinite(A0) || !isFinite(Td)){
+      cylinderResult.innerHTML = "Preencha braço, ângulo inicial e torque desejado corretamente.";
+      return;
+    }
+
+    const rad0 = A0 * Math.PI / 180;
+    const sin0 = Math.sin(rad0);
+    if(Math.abs(sin0) < 1e-6){
+      cylinderResult.innerHTML = "Ângulo inicial muito próximo de 0°. O torque é praticamente nulo; ajuste o ângulo.";
+      return;
+    }
+
+    let Freq_kgf;
+    if(unit === "kgfmm"){
+      // Td em kgf·mm → F = T / (L * senθ)
+      Freq_kgf = Td / (L * sin0);
+    } else {
+      // Td em N·m → T = F * 9.80665 * (L/1000) * senθ
+      // => F = Td / (9.80665 * (L/1000) * senθ)
+      Freq_kgf = Td / (9.80665 * (L/1000) * sin0);
+    }
+
+    if(!isFinite(Freq_kgf) || Freq_kgf <= 0){
+      cylinderResult.innerHTML = "Torque desejado ou parâmetros inválidos. Verifique os valores.";
+      return;
+    }
+
+    // procura cilindro mínimo que atenda
+    const sorted = data.slice().sort((a,b) => a.bore - b.bore);
+    let chosen = null;
+
+    for(const row of sorted){
+      const Fcyl = getForce(row, pVal, kind);  // kgf
+      if(Fcyl >= Freq_kgf){
+        chosen = {row, Fcyl};
+        break;
+      }
+    }
+
+    if(!chosen){
+      cylinderResult.innerHTML =
+        `Nenhum cilindro da tabela atende esse torque nas condições informadas (mesmo Ø320 em ${pVal} bar é insuficiente).`;
+      return;
+    }
+
+    const margem = chosen.Fcyl - Freq_kgf;
+    const perc   = (margem / Freq_kgf) * 100;
+
+    cylinderResult.innerHTML =
+      `Torque desejado: <b>${Td.toFixed(2)} ${unit === "kgfmm" ? "kgf·mm" : "N·m"}</b><br>` +
+      `Força mínima necessária no cilindro: <b>${Freq_kgf.toFixed(2)} kgf</b><br>` +
+      `Cilindro mínimo recomendado: <b>Ø${chosen.row.bore} mm</b> (${kind === "e" ? "extensão" : "retração"} em ${pVal} bar)<br>` +
+      `Força fornecida pelo cilindro: <b>${chosen.Fcyl.toFixed(2)} kgf</b><br>` +
+      `Margem de segurança aproximada: <b>${margem.toFixed(2)} kgf</b> (${perc.toFixed(1)}% acima do mínimo).`;
+  }
+
   // ---- Inicialização ----
   boreSel.innerHTML = '<option value="">—</option>' +
     data.map(d => `<option value="${d.bore}">${d.bore}</option>`).join("");
@@ -239,10 +316,12 @@ document.addEventListener("DOMContentLoaded", function () {
     buildTable(data);
     clearHighlights();
     result.innerHTML = "";
+    cylinderResult.innerHTML = "";
     forceIn.value = "";
     leverIn.value = "";
     angleStart.value = "";
     angleEnd.value = "";
+    desiredTorque.value = "";
     if(forceChart){
       forceChart.destroy();
       forceChart = null;
@@ -251,4 +330,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
   btnUse .addEventListener("click", useTableForce);
   btnCalc.addEventListener("click", calcTorqueAndChart);
+  btnCalcCylinder.addEventListener("click", calcCylinderFromTorque);
 });
