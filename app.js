@@ -8,11 +8,11 @@ document.addEventListener("DOMContentLoaded", function () {
     {bore:10, rod:4,  rodThread:"M4x0,7",   port:"M5",     f:{2:{e:1.6,   r:1.3}, 4:{e:3.2,   r:2.7}, 6:{e:4.8,   r:4.0}, 8:{e:6.4,   r:5.4}, 10:{e:8.0,   r:6.7}}},
     {bore:12, rod:6,  rodThread:"M6x1,0",   port:"M5",     f:{2:{e:2.3,   r:1.7}, 4:{e:4.6,   r:3.5}, 6:{e:6.9,   r:5.2}, 8:{e:9.2,   r:6.9}, 10:{e:11.5,  r:8.6}}},
     {bore:16, rod:6,  rodThread:"M6x1,0",   port:"M5",     f:{2:{e:4.1,   r:3.5}, 4:{e:8.2,   r:7.0}, 6:{e:12.3,  r:10.6},8:{e:16.4,  r:14.1},10:{e:20.5,  r:17.6}}},
-    {bore:20, rod:8,  rodThread:"M8x1,25",  port:"G 1/8\"",f:{2:{e:6.4,   r:5.4}, 4:{e:12.8,  r:10.8},6:{e:19.2,  r:16.1},8:{e:25.6,  r:21.5},10:{e:32.0,  r:26.9}}},
-    {bore:25, rod:10, rodThread:"M10x1,25", port:"G 1/8\"",f:{2:{e:10.0,  r:8.4}, 4:{e:20.0,  r:16.8},6:{e:30.0,  r:25.2},8:{e:40.0,  r:33.6},10:{e:50.1,  r:42.0}}},
-    {bore:32, rod:12, rodThread:"M10x1,25", port:"G 1/8\"",f:{2:{e:16.4,  r:14.1},4:{e:32.8,  r:28.2},6:{e:49.2,  r:42.3},8:{e:65.6,  r:56.4},10:{e:82.0,  r:70.5}}},
-    {bore:40, rod:16, rodThread:"M12x1,25", port:"G 1/4\"",f:{2:{e:25.6,  r:21.5},4:{e:51.3,  r:43.1},6:{e:76.9,  r:64.6},8:{e:102.5, r:86.1},10:{e:128.1, r:107.6}}},
-    {bore:50, rod:20, rodThread:"M16x1,5",  port:"G 1/4\"",f:{2:{e:40.0,  r:33.6},4:{e:80.1,  r:67.3},6:{e:120.1, r:100.9},8:{e:160.2, r:134.5},10:{e:200.2, r:168.2}}},
+    {bore:20, rod:8,  rodThread:"M8x1,25",  port:"G 1/8\"",f:{2:{e:6.4,   r:5.4}, 4:{e:12.8,  r:10.8}, 6:{e:19.2,  r:16.1}, 8:{e:25.6,  r:21.5},10:{e:32.0,  r:26.9}}},
+    {bore:25, rod:10, rodThread:"M10x1,25", port:"G 1/8\"",f:{2:{e:10.0,  r:8.4}, 4:{e:20.0,  r:16.8}, 6:{e:30.0,  r:25.2}, 8:{e:40.0,  r:33.6},10:{e:50.1,  r:42.0}}},
+    {bore:32, rod:12, rodThread:"M10x1,25", port:"G 1/8\"",f:{2:{e:16.4,  r:14.1},4:{e:32.8,  r:28.2}, 6:{e:49.2,  r:42.3}, 8:{e:65.6,  r:56.4},10:{e:82.0,  r:70.5}}},
+    {bore:40, rod:16, rodThread:"M12x1,25", port:"G 1/4\"",f:{2:{e:25.6,  r:21.5},4:{e:51.3,  r:43.1}, 6:{e:76.9,  r:64.6}, 8:{e:102.5, r:86.1},10:{e:128.1, r:107.6}}},
+    {bore:50, rod:20, rodThread:"M16x1,5",  port:"G 1/4\"",f:{2:{e:40.0,  r:33.6},4:{e:80.1,  r:67.3}, 6:{e:120.1, r:100.9},8:{e:160.2, r:134.5},10:{e:200.2, r:168.2}}},
     {bore:63, rod:20, rodThread:"M16x1,5",  port:"G 3/8\"",f:{2:{e:63.6,  r:57.2},4:{e:127.1, r:114.3},6:{e:190.7, r:171.5},8:{e:254.3, r:228.7},10:{e:317.9, r:285.8}}},
     {bore:80, rod:25, rodThread:"M20x1,5",  port:"G 3/8\"",f:{2:{e:102.5, r:92.5},4:{e:205.0, r:185.0},6:{e:307.5, r:277.5},8:{e:410.0, r:370.0},10:{e:512.6, r:462.5}}},
     {bore:100,rod:25, rodThread:"M20x1,5",  port:"G 1/2\"",f:{2:{e:160.2, r:150.2},4:{e:320.3, r:300.3},6:{e:480.5, r:450.5},8:{e:640.7, r:600.7},10:{e:800.9, r:750.8}}},
@@ -29,21 +29,16 @@ document.addEventListener("DOMContentLoaded", function () {
   const search  = document.getElementById("search");
   const clear   = document.getElementById("clear");
 
-  const kindSel = document.getElementById("forceKind");
-  const forceIn = document.getElementById("cylinderForce");
-  const leverIn = document.getElementById("leverLength");
-  const angleIn = document.getElementById("angle");
-  const btnUse  = document.getElementById("useTableForce");
-  const btnCalc = document.getElementById("calculateTorque");
-  const result  = document.getElementById("torqueResult");
+  const kindSel   = document.getElementById("forceKind");
+  const forceIn   = document.getElementById("cylinderForce");
+  const leverIn   = document.getElementById("leverLength");
+  const angleStart = document.getElementById("angleStart");
+  const angleEnd   = document.getElementById("angleEnd");
+  const btnUse    = document.getElementById("useTableForce");
+  const btnCalc   = document.getElementById("calculateTorque");
+  const result    = document.getElementById("torqueResult");
 
-  // elementos do gráfico
-  const chartLever   = document.getElementById("chartLever");
-  const angleStart   = document.getElementById("angleStart");
-  const angleEnd     = document.getElementById("angleEnd");
-  const chartBtn     = document.getElementById("plotChart");
-  const chartCanvas  = document.getElementById("forceChart");
-  const chartMessage = document.getElementById("chartMessage");
+  const chartCanvas = document.getElementById("forceChart");
   let forceChart = null;
 
   function fmt1(v){ return Number(v).toFixed(1).replace(".",","); }
@@ -143,7 +138,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const kind    = (kindSel.value || "e");
 
     if(!boreVal || !pVal){
-      result.innerHTML = "Escolha pelo menos o diâmetro do cilindro e a pressão.";
+      result.innerHTML = "Selecione o diâmetro do cilindro e a pressão na parte da tabela.";
       return;
     }
 
@@ -158,60 +153,8 @@ document.addEventListener("DOMContentLoaded", function () {
     result.innerHTML = "";
   }
 
-  function calcTorque(){
-    const F = parsePT(forceIn.value);   // kgf
-    const L = parsePT(leverIn.value);   // mm
-    const A = parsePT(angleIn.value);   // graus
-
-    if(!isFinite(F) || !isFinite(L) || !isFinite(A)){
-      result.innerHTML = "Preencha força, braço e ângulo corretamente.";
-      return;
-    }
-
-    const rad = A * Math.PI / 180;
-    const sin = Math.sin(rad);
-
-    const Tmm = F * L * sin;                     // kgf·mm
-    const Tm  = Tmm / 1000;                      // kgf·m
-    const Tnm = (F * 9.80665) * (L/1000) * sin;  // N·m
-
-    result.innerHTML =
-      `Torque: ${Tmm.toFixed(1)} kgf·mm | ${Tm.toFixed(3)} kgf·m | ${Tnm.toFixed(2)} N·m`;
-  }
-
-  // --------- GRÁFICO: força efetiva x ângulo ---------
-  function buildChart(){
-    chartMessage.innerHTML = "";
-
-    const boreVal = (boreSel.value || "").trim();
-    const pVal    = (presSel.value || "").trim();
-    const kind    = (kindSel.value || "e");
-
-    if(!boreVal || !pVal){
-      chartMessage.innerHTML = "Selecione o diâmetro do cilindro e a pressão na tabela (acima) antes de gerar o gráfico.";
-      return;
-    }
-
-    const row = data.find(d => String(d.bore) === boreVal);
-    if(!row){
-      chartMessage.innerHTML = "Cilindro não encontrado na tabela.";
-      return;
-    }
-
-    const L = parsePT(chartLever.value);   // mm
-    const A0 = parsePT(angleStart.value);  // graus
-    const A1 = parsePT(angleEnd.value);    // graus
-
-    if(!isFinite(L) || !isFinite(A0) || !isFinite(A1)){
-      chartMessage.innerHTML = "Preencha comprimento da alavanca e ângulos inicial/final corretamente.";
-      return;
-    }
-
-    const F = getForce(row, pVal, kind);  // kgf
-    if(!isFinite(F)){
-      chartMessage.innerHTML = "Não foi possível obter a força do cilindro para esses parâmetros.";
-      return;
-    }
+  function buildChart(F, L, A0, A1){
+    if(!chartCanvas) return;
 
     const steps = 50;
     const labels = [];
@@ -220,10 +163,10 @@ document.addEventListener("DOMContentLoaded", function () {
     for(let i = 0; i <= steps; i++){
       const ang = A0 + (A1 - A0) * (i / steps);
       const rad = ang * Math.PI / 180;
-      const F_eff = F * Math.sin(rad);   // kgf efetivo na alavanca
+      const Tmm = F * L * Math.sin(rad); // torque em kgf·mm
 
       labels.push(ang.toFixed(1) + "°");
-      values.push(F_eff);
+      values.push(Tmm);
     }
 
     if(forceChart){
@@ -235,7 +178,7 @@ document.addEventListener("DOMContentLoaded", function () {
       data: {
         labels: labels,
         datasets: [{
-          label: `Força efetiva na alavanca (kgf)`,
+          label: "Torque na alavanca (kgf·mm)",
           data: values,
           tension: 0.25
         }]
@@ -245,17 +188,38 @@ document.addEventListener("DOMContentLoaded", function () {
         maintainAspectRatio: false,
         scales: {
           x: {
-            title: { display: true, text: "Ângulo entre cilindro e alavanca (°)" }
+            title: { display: true, text: "Ângulo (°)" }
           },
           y: {
-            title: { display: true, text: "Força efetiva (kgf)" }
+            title: { display: true, text: "Torque (kgf·mm)" }
           }
         }
       }
     });
+  }
 
-    chartMessage.innerHTML =
-      `Força axial usada: <b>${F.toFixed(1)} kgf</b> · Comprimento da alavanca: <b>${L.toFixed(1)} mm</b>.`;
+  function calcTorqueAndChart(){
+    const F = parsePT(forceIn.value);       // kgf
+    const L = parsePT(leverIn.value);       // mm
+    const A0 = parsePT(angleStart.value);   // graus
+    const A1 = parsePT(angleEnd.value);     // graus
+
+    if(!isFinite(F) || !isFinite(L) || !isFinite(A0) || !isFinite(A1)){
+      result.innerHTML = "Preencha força, braço e ângulos inicial/final corretamente.";
+      return;
+    }
+
+    const rad0 = A0 * Math.PI / 180;
+    const sin0 = Math.sin(rad0);
+    const Tmm0 = F * L * sin0;   // kgf·mm
+    const Tm0  = Tmm0 / 1000;    // kgf·m
+    const Tnm0 = (F * 9.80665) * (L/1000) * sin0;  // N·m
+
+    result.innerHTML =
+      `Torque no ângulo inicial (${A0.toFixed(1)}°): ` +
+      `${Tmm0.toFixed(1)} kgf·mm | ${Tm0.toFixed(3)} kgf·m | ${Tnm0.toFixed(2)} N·m`;
+
+    buildChart(F, L, A0, A1);
   }
 
   // ---- Inicialização ----
@@ -275,7 +239,10 @@ document.addEventListener("DOMContentLoaded", function () {
     buildTable(data);
     clearHighlights();
     result.innerHTML = "";
-    chartMessage.innerHTML = "";
+    forceIn.value = "";
+    leverIn.value = "";
+    angleStart.value = "";
+    angleEnd.value = "";
     if(forceChart){
       forceChart.destroy();
       forceChart = null;
@@ -283,9 +250,5 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   btnUse .addEventListener("click", useTableForce);
-  btnCalc.addEventListener("click", calcTorque);
-
-  if(chartBtn){
-    chartBtn.addEventListener("click", buildChart);
-  }
+  btnCalc.addEventListener("click", calcTorqueAndChart);
 });
