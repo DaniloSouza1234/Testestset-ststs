@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const leverIn    = document.getElementById("leverLength");
   const angleStart = document.getElementById("angleStart");
   const angleEnd   = document.getElementById("angleEnd");
+  const torqueUnit = document.getElementById("torqueUnit");
   const btnUse     = document.getElementById("useTableForce");
   const btnCalc    = document.getElementById("calculateTorque");
   const result     = document.getElementById("torqueResult");
@@ -42,10 +43,10 @@ document.addEventListener("DOMContentLoaded", function () {
   let forceChart = null;
 
   // dimensionamento
-  const desiredTorque    = document.getElementById("desiredTorque");
-  const desiredTorqueUnit= document.getElementById("desiredTorqueUnit");
-  const btnCalcCylinder  = document.getElementById("calcCylinder");
-  const cylinderResult   = document.getElementById("cylinderResult");
+  const desiredTorque     = document.getElementById("desiredTorque");
+  const desiredTorqueUnit = document.getElementById("desiredTorqueUnit");
+  const btnCalcCylinder   = document.getElementById("calcCylinder");
+  const cylinderResult    = document.getElementById("cylinderResult");
 
   function fmt1(v){ return Number(v).toFixed(1).replace(".",","); }
 
@@ -205,10 +206,10 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function calcTorqueAndChart(){
-    const F = parsePT(forceIn.value);       // kgf
-    const L = parsePT(leverIn.value);       // mm
-    const A0 = parsePT(angleStart.value);   // graus
-    const A1 = parsePT(angleEnd.value);     // graus
+    const F  = parsePT(forceIn.value);       // kgf
+    const L  = parsePT(leverIn.value);       // mm
+    const A0 = parsePT(angleStart.value);    // graus
+    const A1 = parsePT(angleEnd.value);      // graus
 
     if(!isFinite(F) || !isFinite(L) || !isFinite(A0) || !isFinite(A1)){
       result.innerHTML = "Preencha força, braço e ângulos inicial/final corretamente.";
@@ -217,13 +218,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const rad0 = A0 * Math.PI / 180;
     const sin0 = Math.sin(rad0);
+
     const Tmm0 = F * L * sin0;   // kgf·mm
     const Tm0  = Tmm0 / 1000;    // kgf·m
     const Tnm0 = (F * 9.80665) * (L/1000) * sin0;  // N·m
 
+    const unit = (torqueUnit.value || "kgfm");
+    let torqueText;
+    if(unit === "kgfm"){
+      torqueText = `${Tm0.toFixed(3)} kgf·m`;
+    } else {
+      torqueText = `${Tnm0.toFixed(2)} N·m`;
+    }
+
     result.innerHTML =
-      `Torque no ângulo inicial (${A0.toFixed(1)}°): ` +
-      `${Tmm0.toFixed(1)} kgf·mm | ${Tm0.toFixed(3)} kgf·m | ${Tnm0.toFixed(2)} N·m`;
+      `Torque no ângulo inicial (${A0.toFixed(1)}°): <b>${torqueText}</b>`;
 
     buildChart(F, L, A0, A1);
   }
@@ -236,33 +245,41 @@ document.addEventListener("DOMContentLoaded", function () {
     const kind = (kindSel.value || "e");
     const L    = parsePT(leverIn.value);        // mm
     const A0   = parsePT(angleStart.value);     // graus
+    const A1   = parsePT(angleEnd.value);       // graus
     const Td   = parsePT(desiredTorque.value);  // torque desejado
-    const unit = (desiredTorqueUnit.value || "kgfmm");
+    const unit = (desiredTorqueUnit.value || "kgfm");
 
     if(!pVal){
       cylinderResult.innerHTML = "Selecione a pressão (bar) no topo da página.";
       return;
     }
-    if(!isFinite(L) || !isFinite(A0) || !isFinite(Td)){
-      cylinderResult.innerHTML = "Preencha braço, ângulo inicial e torque desejado corretamente.";
+    if(!isFinite(L) || !isFinite(A0) || !isFinite(A1) || !isFinite(Td)){
+      cylinderResult.innerHTML = "Preencha braço, ângulo inicial/final e torque desejado corretamente.";
       return;
     }
 
     const rad0 = A0 * Math.PI / 180;
+    const rad1 = A1 * Math.PI / 180;
     const sin0 = Math.sin(rad0);
-    if(Math.abs(sin0) < 1e-6){
-      cylinderResult.innerHTML = "Ângulo inicial muito próximo de 0°. O torque é praticamente nulo; ajuste o ângulo.";
+    const sin1 = Math.sin(rad1);
+
+    const sinMin = Math.min(Math.abs(sin0), Math.abs(sin1));
+
+    if(sinMin < 1e-3){
+      cylinderResult.innerHTML =
+        "O intervalo de ângulos inclui valor muito próximo de 0° ou 180°. " +
+        "O torque disponível tende a zero; ajuste o intervalo ou a geometria.";
       return;
     }
 
     let Freq_kgf;
-    if(unit === "kgfmm"){
-      // Td em kgf·mm → F = T / (L * senθ)
-      Freq_kgf = Td / (L * sin0);
+    if(unit === "kgfm"){
+      // Td em kgf·m → Tmm = Td * 1000 → F = Tmm / (L * sen(θ_min))
+      Freq_kgf = (Td * 1000) / (L * sinMin);
     } else {
-      // Td em N·m → T = F * 9.80665 * (L/1000) * senθ
-      // => F = Td / (9.80665 * (L/1000) * senθ)
-      Freq_kgf = Td / (9.80665 * (L/1000) * sin0);
+      // Td em N·m → T = F * 9.80665 * (L/1000) * sen(θ_min)
+      // => F = Td / (9.80665 * (L/1000) * sen(θ_min))
+      Freq_kgf = Td / (9.80665 * (L/1000) * sinMin);
     }
 
     if(!isFinite(Freq_kgf) || Freq_kgf <= 0){
@@ -284,19 +301,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if(!chosen){
       cylinderResult.innerHTML =
-        `Nenhum cilindro da tabela atende esse torque nas condições informadas (mesmo Ø320 em ${pVal} bar é insuficiente).`;
+        `Nenhum cilindro da tabela atende esse torque nas condições informadas ` +
+        `(mesmo Ø320 em ${pVal} bar é insuficiente).`;
       return;
     }
 
     const margem = chosen.Fcyl - Freq_kgf;
     const perc   = (margem / Freq_kgf) * 100;
 
+    const unidadeTexto = (unit === "kgfm" ? "kgf·m" : "N·m");
+
     cylinderResult.innerHTML =
-      `Torque desejado: <b>${Td.toFixed(2)} ${unit === "kgfmm" ? "kgf·mm" : "N·m"}</b><br>` +
+      `Torque desejado (mínimo no intervalo): <b>${Td.toFixed(2)} ${unidadeTexto}</b><br>` +
       `Força mínima necessária no cilindro: <b>${Freq_kgf.toFixed(2)} kgf</b><br>` +
-      `Cilindro mínimo recomendado: <b>Ø${chosen.row.bore} mm</b> (${kind === "e" ? "extensão" : "retração"} em ${pVal} bar)<br>` +
-      `Força fornecida pelo cilindro: <b>${chosen.Fcyl.toFixed(2)} kgf</b><br>` +
-      `Margem de segurança aproximada: <b>${margem.toFixed(2)} kgf</b> (${perc.toFixed(1)}% acima do mínimo).`;
+      `Cilindro mínimo recomendado (pior ângulo do intervalo): ` +
+      `<b>Ø${chosen.row.bore} mm</b> (${kind === "e" ? "extensão" : "retração"} em ${pVal} bar)<br>` +
+      `Força fornecida pelo cilindro selecionado: <b>${chosen.Fcyl.toFixed(2)} kgf</b><br>` +
+      `Margem de segurança aproximada: <b>${margem.toFixed(2)} kgf</b> ` +
+      `(${perc.toFixed(1)}% acima do mínimo).`;
   }
 
   // ---- Inicialização ----
