@@ -225,9 +225,69 @@ th.group{
   margin-top:16px;
 }
 
+/* DIMENSIONAMENTO */
+.dim-section{
+  margin-top:20px;
+}
+
+.dim-section h3{
+  margin:0 0 6px;
+  font-size:16px;
+  color:var(--title);
+}
+
+.dim-note{
+  margin:0 0 10px;
+  font-size:12px;
+  color:var(--muted);
+}
+
+.dim-grid{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(180px,1fr));
+  gap:12px;
+  align-items:end;
+}
+
+.dim-grid label{
+  display:flex;
+  flex-direction:column;
+  font-size:12px;
+  color:var(--muted);
+  gap:4px;
+}
+
+.dim-grid input,
+.dim-grid select{
+  height:36px;
+  padding:0 10px;
+  border-radius:6px;
+  border:1px solid var(--border);
+  background:var(--input-bg);
+  color:var(--text);
+}
+
+.dim-grid button{
+  height:36px;
+  border-radius:6px;
+  border:1px solid var(--border);
+  background:var(--button-bg);
+  color:#fff;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.dim-grid button:hover{
+  background:var(--button-hover);
+}
+
 /* RESPONSIVO */
 @media (max-width: 900px){
   .torque-grid{
+    grid-template-columns: 1fr;
+  }
+
+  .dim-grid{
     grid-template-columns: 1fr;
   }
 
